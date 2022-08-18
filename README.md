@@ -6,17 +6,104 @@
 
 - [Helm chart](https://github.com/portworx/helm)
 
-## Key features
-
-
-## Examples
+## Examples Blueprint
 
 To get started look at these samples [blueprints](blueprints/).
 
-<!--- BEGIN_TF_DOCS --->
 ## Requirements
 
-No requirements.
+For the add-on to work, Portworx need additional permission to AWS resources which can be provided through the following two ways (Also covered in Sample Blueprints) :- 
+
+### Method1: Custom IAM policy
+
+1. Add this code block in your terraform script to create the policy with the required permissions. Keep a note of the resource name for policy you created
+
+```
+resource "aws_iam_policy" "<policy-resource-name>" {
+  name = "<policy-name>"
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = [
+          "ec2:AttachVolume",
+          "ec2:ModifyVolume",
+          "ec2:DetachVolume",
+          "ec2:CreateTags",
+          "ec2:CreateVolume",
+          "ec2:DeleteTags",
+          "ec2:DeleteVolume",
+          "ec2:DescribeTags",
+          "ec2:DescribeVolumeAttribute",
+          "ec2:DescribeVolumesModifications",
+          "ec2:DescribeVolumeStatus",
+          "ec2:DescribeVolumes",
+          "ec2:DescribeInstances",
+          "autoscaling:DescribeAutoScalingGroups"
+        ]
+        Effect   = "Allow"
+        Resource = "*"
+      },
+    ]
+  })
+}
+```
+
+2. Run `terraform apply` command for the policy (replace it with your resource name):
+
+```bash
+terraform apply -target="aws_iam_policy.<policy-resource-name>"
+```
+3. Attach the newly created AWS policy ARN to the node groups in your cluster 
+
+```
+ managed_node_groups = {
+    node_group_1 = {
+      node_group_name           = "my_node_group_1"
+      instance_types            = ["t2.small"]
+      min_size                  = 1
+      max_size                  = 2
+      subnet_ids                = module.vpc.private_subnets
+
+      #Add this line to the code block or add the new policy ARN to the list if it already exist
+      additional_iam_policies   = [aws_iam_policy.<policy-resource-name>.arn]
+
+    }
+  }
+```
+4 .Run the command below to apply the changes. (This step can be performed even if the cluster is up and running. The policy attachment can happens without restarting the nodes)
+```bash
+terraform apply -target="module.eks_blueprints"
+```
+
+### Method 2: AWS Security Credentials
+
+Create a User with the same policy and provide the security credentials AWS access key ID and secret access key to Portworx.
+ 
+
+Pass the key pair to Portworx by setting these two Environment variable.
+
+```
+export TF_VAR_aws_access_key_id=<access-key-id-value>
+export TF_VAR_aws_secret_access_key=<access-key-secret>
+```
+
+To use Portworx addon with this method, along with ```enable_portworx``` variable, have these two additional variables in ```eks_blueprints_kuberenetes_addons``` module block
+
+```
+  enable_portworx                     = true
+  portworx_aws_access_key_id          = var.aws_access_key_id
+  portworx_aws_secret_access_key      = var.aws_secret_access_key
+
+```
+
+Terraform will automatically populate the variable ```aws_access_key_id``` and ```aws_secret_access_key``` from the environment variables.
+
+Alternatively one can also provide the value of key pair directly to these variables.
+
+<!--- BEGIN_TF_DOCS --->
+
 
 ## Providers
 
@@ -35,7 +122,7 @@ No requirements.
 ## Resources
 | Name | Type | Required |
 |------|------|----------|
-| [aws_iam_policy.portworx_eksblueprint](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_policy) | resource | no|
+| [aws_iam_policy.portworx_eksblueprint](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_policy)| resource | no|
 
 ## Inputs
 

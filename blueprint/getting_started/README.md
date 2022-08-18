@@ -75,8 +75,6 @@ aws eks --region <aws-region> update-kubeconfig --name <cluster-name>
 kubectl get nodes
 ```
 
-You should see 4 nodes in the list.
-
 ```shell
 kubectl get stc -n kube-system
 ```
