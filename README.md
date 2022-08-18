@@ -102,6 +102,37 @@ Terraform will automatically populate the variable ```aws_access_key_id``` and `
 
 Alternatively one can also provide the value of key pair directly to these variables.
 
+## Usage
+
+After completing the requirement step, installing Portworx is as simple as setting ```enable_portworx``` variable to true inside Kubernetes Addon module
+
+```
+
+module "eks_blueprints_kubernetes_addons" {
+ source = "github.com/pragrawal10/terraform-aws-eks-blueprints//modules/kubernetes-addons"
+
+  eks_cluster_id       = module.eks_blueprints.eks_cluster_id
+  eks_cluster_endpoint = module.eks_blueprints.eks_cluster_endpoint
+  eks_oidc_provider    = module.eks_blueprints.oidc_provider
+  eks_cluster_version  = module.eks_blueprints.eks_cluster_version
+
+
+  #Add this line to enable Portworx      
+  enable_portworx                     = true
+}
+```
+
+To customise Portworx installation pass the configurations as object like below
+
+```
+  enable_portworx         = true
+  portworx_chart_values   ={ 
+    clusterName="testCluster"
+    imageVersion="2.11.1"
+  } 
+}
+```
+
 <!--- BEGIN_TF_DOCS --->
 
 
