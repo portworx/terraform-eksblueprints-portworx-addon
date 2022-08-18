@@ -168,7 +168,6 @@ any remaining EBS snapshots and volumes, they are not deleted as part of the des
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_aws_region"></a> [aws\_region](#input\_aws\_region) | AWS Region to deploy resources | `string` | `"us-east-1"` | no |
 | <a name="input_aws_access_key_id"></a> [aws_access_key_id](#input\_aws\_access\_key\_id) | AWS access key id value| `string` | `""` | yes |
 | <a name="input_aws_secret_access_key"></a> [aws_secret_access_key](#input\_aws\_secret\_access\_key) | AWS secret access key value| `string` | `""` | yes |
 | <a name="input_cluster_name"></a> [cluster\_name](#input\_cluster\_name) | Name of cluster - used by Terratest for e2e test automation | `string` | `""` | no |

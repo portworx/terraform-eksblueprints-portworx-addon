@@ -3,9 +3,17 @@ provider "aws" {
 }
 
 locals {
-  eks_cluster_endpoint=module.eks_blueprints.eks_cluster_endpoint
-  cluster_ca_certificate = base64decode(module.eks_blueprints.eks_cluster_certificate_authority_data)
-  token                  = data.aws_eks_cluster_auth.this.token
+  name = "pradyuman-eks-iam"
+  cluster_name = coalesce(var.cluster_name, local.name)
+  region       = "us-east-1"
+  
+  vpc_cidr = "10.0.0.0/16"
+  azs      = slice(data.aws_availability_zones.available.names, 0, 3)
+
+  tags = {
+    Blueprint  = local.name
+    GithubRepo = "github.com/aws-ia/terraform-aws-eks-blueprints"
+  }
 }
 
 provider "kubernetes" {
@@ -29,17 +37,7 @@ data "aws_eks_cluster_auth" "this" {
 data "aws_availability_zones" "available" {}
 
 locals {
-  name = "pradyuman-eks-iam"
-  cluster_name = coalesce(var.cluster_name, local.name)
-  region       = "us-east-1"
   
-  vpc_cidr = "10.0.0.0/16"
-  azs      = slice(data.aws_availability_zones.available.names, 0, 3)
-
-  tags = {
-    Blueprint  = local.name
-    GithubRepo = "github.com/aws-ia/terraform-aws-eks-blueprints"
-  }
 }
 
 #---------------------------------------------------------------
@@ -86,8 +84,8 @@ module "vpc" {
 # Custom IAM roles for Node Groups
 #---------------------------------------------------------------
 
-resource "aws_iam_policy" "pradyuman_policy_one" {
-  name = "pradyuman_policy_one"
+resource "aws_iam_policy" "portworx_eksblueprint_policy" {
+  name = "portworx_eksblueprint_policy"
 
   policy = jsonencode({
     Version = "2012-10-17"
@@ -163,39 +161,6 @@ module "eks_blueprints_kubernetes_addons" {
     clusterName="pradyuman"
     imageVersion="2.11.1"
   } 
-  
+
   tags = local.tags
 }
-
-
-
-resource "aws_iam_policy" "pradyuman_policy_two" {
-  name = "pradyuman_policy_two"
-
-  policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Action = [
-          "ec2:AttachVolume",
-          "ec2:ModifyVolume",
-          "ec2:DetachVolume",
-          "ec2:CreateTags",
-          "ec2:CreateVolume",
-          "ec2:DeleteTags",
-          "ec2:DeleteVolume",
-          "ec2:DescribeTags",
-          "ec2:DescribeVolumeAttribute",
-          "ec2:DescribeVolumesModifications",
-          "ec2:DescribeVolumeStatus",
-          "ec2:DescribeVolumes",
-          "ec2:DescribeInstances",
-          "autoscaling:DescribeAutoScalingGroups"
-        ]
-        Effect   = "Allow"
-        Resource = "*"
-      },
-    ]
-  })
-}
-

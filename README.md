@@ -35,7 +35,7 @@ No requirements.
 ## Resources
 | Name | Type | Required |
 |------|------|----------|
-| [aws_iam_policy.portworx_eksblueprint]https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_policy | resource | no|
+| [aws_iam_policy.portworx_eksblueprint](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_policy) | resource | no|
 
 ## Inputs
 
@@ -43,8 +43,8 @@ No requirements.
 |------|-------------|------|---------|:--------:|
 | <a name="input_addon_context"></a> [addon\_context](#input\_addon\_context) | Input configuration for the addon | <pre>object({<br>    aws_caller_identity_account_id = string<br>    aws_caller_identity_arn        = string<br>    aws_eks_cluster_endpoint       = string<br>    aws_partition_id               = string<br>    aws_region_name                = string<br>    eks_cluster_id                 = string<br>    eks_oidc_issuer_url            = string<br>    eks_oidc_provider_arn          = string<br>    tags                           = map(string)<br>  })</pre> | n/a | yes |
 | <a name="input_chart_values"></a> [chart\_values](#input\_chart\_values) | Custom values for the Portworx Helm chart | `any` | `{}` | no |
-| <a name="input_aws_access_key_id"></a> [aws\_access\_key\_id](#input\_aws\_access\_key\_id) | AWS access key id value | `string` | `` | no |
-| <a name="input_aws_secret_access_key"></a> [aws\_secret\_access\_key](#input\_aws\_secret\_access\_key) | AWS secret access key value | `string` | `` | no |
+| <a name="input_aws_access_key_id"></a> [aws\_access\_key\_id](#input\_aws\_access\_key\_id) | AWS access key id value (Not required if using IAM policy to give access. Required otherwise. )| `string` | `` | no |
+| <a name="input_aws_secret_access_key"></a> [aws\_secret\_access\_key](#input\_aws\_secret\_access\_key) | AWS secret access key value (Not required if using IAM policy to give access)| `string` | `` | no |
 | <a name="input_helm_config"></a> [helm\_config](#input\_helm\_config) | Helm provider config for the Portworx | `any` | `{}` | no |
 | <a name="input_set_values"></a> [set\_values](#input\_set\_values) | Forced set values for Portworx Helm chart | `any` | `[]` | no |
 | <a name="input_set_sensitive_values"></a> [set\_sensitive\_values](#input\_set\_sensitive\_values) | Forced set sensitive values for Portworx Helm chart | `any` | `[]` | no |
