@@ -41,14 +41,7 @@ terraform init
 
 Change the variables like region, vpc_cidr, managed_node_groups configurations to set up the cluster according to your requirements. You can additionally supply values to Portworx customise its installation. Refer the configuration section below 
 
-
-#### Step 4. Use Terraform to plan a deployment:
-
-```hcl
-terraform plan
-```
-
-#### Step 5. Review the plan and apply the deployment with Terraform.
+#### Step 4. Apply the deployment with Terraform.
 We will leverage Terraform's target functionality to deploy a VPC, an EKS Cluster, and Kubernetes add-ons in separate steps.
 
 Deploy the VPC. This step will take roughly 3 minutes to complete.
@@ -58,7 +51,7 @@ terraform apply -target="module.vpc"
 ```
 Deploy custom IAM policy.
 ```
-terraform apply -target="aws_iam_policy.portworx_eksblueprint_policy"
+terraform apply -target="aws_iam_policy.portworx_eksblueprint_volumeAccess"
 ```
 Deploy the EKS cluster. This step will take roughly 14 minutes to complete.
 ```
@@ -70,8 +63,7 @@ terraform apply -target="module.eks_blueprints_kubernetes_addons"
 ```
 
 
-
-#### Step 6 Use the AWS CLI to provision a kubeconfig profile for the cluster:
+#### Step 5 Use the AWS CLI to provision a kubeconfig profile for the cluster:
 
 EKS Cluster details can be extracted from "terraform output" command or from AWS Console to get the name of cluster.
 
@@ -79,7 +71,7 @@ EKS Cluster details can be extracted from "terraform output" command or from AWS
 aws eks --region <aws-region> update-kubeconfig --name <cluster-name>
 ```
 
-#### Step 7. Check that the nodes have created and that Portworx is running:
+#### Step 6. Check that the nodes have created and that Portworx is running:
 
 ```shell
 kubectl get nodes
@@ -154,7 +146,7 @@ terraform destroy -target="module.eks_blueprints"
 #### Destroy the IAM policy.
 
 ```hcl
-terraform destroy -target="aws_iam_policy.portworx_eksblueprint_policy"
+terraform destroy -target="aws_iam_policy.portworx_eksblueprint_volumeAccess"
 ```
 
 #### Destroy the VPC.

@@ -8,18 +8,18 @@
 #   value       = module.vpc.public_subnets_cidr_blocks
 # }
 
-output "vpc_cidr" {
-  description = "VPC CIDR"
-  value       = module.vpc.vpc_cidr_block
-}
+# output "vpc_cidr" {
+#   description = "VPC CIDR"
+#   value       = module.vpc.vpc_cidr_block
+# }
 
 output "eks_cluster_id" {
   description = "EKS cluster ID"
   value       = module.eks_blueprints.eks_cluster_id
 }
 
-output "configure_kubectl" {
-  description = "Configure kubectl: make sure you're logged in with the correct AWS profile and run the following command to update your kubeconfig"
+output "run_to_configure_kubectl" {
+  description = "Run this to configure kubectl: make sure you're logged in with the correct AWS profile and run the following command to update your kubeconfig"
   value       = module.eks_blueprints.configure_kubectl
 }
 

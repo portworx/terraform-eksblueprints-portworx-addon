@@ -24,7 +24,7 @@ maxStorageNodesPerZone: ${maxStorageNodesPerZone}  # The maximum number of stora
 secretType: k8s                       # Defaults to k8s, but can be kvdb/k8s/aws-kms/vault/ibm-kp. It is autopopulated to ibm-kp
                                       # if the environment is IKS.
 
-dataInterface: none                   # Name of the interface <ethX>
+dataInterface: ${dataInterface}                   # Name of the interface <ethX>
 managementInterface: none             # Name of the interface <ethX>
 serviceType: none                     # Kubernetes service type for services deployed by the Operator. Direct Values like
                                       # 'LoadBalancer', 'NodePort' will change all services. To change the types of specific

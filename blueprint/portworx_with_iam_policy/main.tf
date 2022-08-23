@@ -3,7 +3,7 @@ provider "aws" {
 }
 
 locals {
-  name = "pradyuman-eks-iam"
+  name = "portworx-eks-iam-policy"
   cluster_name = coalesce(var.cluster_name, local.name)
   region       = "us-east-1"
   
@@ -35,10 +35,6 @@ data "aws_eks_cluster_auth" "this" {
 }
 
 data "aws_availability_zones" "available" {}
-
-locals {
-  
-}
 
 #---------------------------------------------------------------
 # Supporting Resources
@@ -84,8 +80,8 @@ module "vpc" {
 # Custom IAM roles for Node Groups
 #---------------------------------------------------------------
 
-resource "aws_iam_policy" "portworx_eksblueprint_policy" {
-  name = "portworx_eksblueprint_policy"
+resource "aws_iam_policy" "portworx_eksblueprint_volumeAccess" {
+  name = "portworx_eksblueprint_volumeAccess"
 
   policy = jsonencode({
     Version = "2012-10-17"
@@ -115,7 +111,6 @@ resource "aws_iam_policy" "portworx_eksblueprint_policy" {
 }
 
 
-
 #---------------------------------------------------------------
 # EKS Blueprints
 #---------------------------------------------------------------
@@ -130,37 +125,27 @@ module "eks_blueprints" {
   private_subnet_ids = module.vpc.private_subnets
 
   managed_node_groups = {
-    pradyuman_eks_med = {
-      node_group_name           = "pradyuman_eks_1"
+    eksblueprint_nodegroup_med_2 = {
+      node_group_name           = "eksblueprint_nodegroup_med_2"
       instance_types            = ["t2.medium"]
-      min_size                  = 2
+      min_size                  = 3
       max_size                  = 4
       subnet_ids                = module.vpc.private_subnets
-      additional_iam_policies   = [aws_iam_policy.pradyuman_policy_one.arn,aws_iam_policy.pradyuman_policy_two.arn]
+      additional_iam_policies   = [aws_iam_policy.portworx_eksblueprint_volumeAccess.arn]
     }
   }
   tags = local.tags
 
-  depends_on = [
-    aws_iam_policy.pradyuman_policy_one
-  ]
 }
-
-
 
 module "eks_blueprints_kubernetes_addons" {
   source = "github.com/pragrawal10/terraform-aws-eks-blueprints//modules/kubernetes-addons"
-
   eks_cluster_id       = module.eks_blueprints.eks_cluster_id
   eks_cluster_endpoint = module.eks_blueprints.eks_cluster_endpoint
   eks_oidc_provider    = module.eks_blueprints.oidc_provider
   eks_cluster_version  = module.eks_blueprints.eks_cluster_version
 
-  enable_portworx                     = true
-  portworx_chart_values               ={ 
-    clusterName="pradyuman"
-    imageVersion="2.11.1"
-  } 
-
+  enable_portworx      = true
+  
   tags = local.tags
 }
