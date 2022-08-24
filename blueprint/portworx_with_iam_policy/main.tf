@@ -129,7 +129,7 @@ module "eks_blueprints" {
       node_group_name           = "eksblueprint_nodegroup_med_2"
       instance_types            = ["t2.medium"]
       min_size                  = 3
-      max_size                  = 4
+      max_size                  = 3
       subnet_ids                = module.vpc.private_subnets
       additional_iam_policies   = [aws_iam_policy.portworx_eksblueprint_volumeAccess.arn]
     }
