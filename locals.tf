@@ -3,13 +3,7 @@ locals {
   namespace            = "kube-system"
   service_account_name = "${local.name}-sa"
 
-  set_values = try(length(var.aws_access_key_id) > 0, false) ? concat([
-      {
-        name  = "envVars"
-        value = "AWS_ACCESS_KEY_ID=${var.aws_access_key_id};AWS_SECRET_ACCESS_KEY=${var.aws_secret_access_key}"
-      }
-    ],var.set_values): var.set_values
-
+  set_values = var.set_values
   set_sensitive_values = var.set_sensitive_values
 
   default_helm_config = {
@@ -29,7 +23,7 @@ locals {
     var.helm_config
   )
 
- irsa_iam_policies_list= try(var.chart_values.useAWSMarketplace, false) ? concat([aws_iam_policy.portworx_blueprint_metering[0].arn], var.irsa_policies) : var.irsa_policies
+ irsa_iam_policies_list= try(var.chart_values.aws.useAWSMarketplace, false) ? concat([aws_iam_policy.portworx_blueprint_metering[0].arn], var.irsa_policies) : var.irsa_policies
 
   irsa_config = {
     create_kubernetes_namespace = false
@@ -54,8 +48,8 @@ locals {
         maxStorageNodesPerZone      = 3 
         useOpenshiftInstall         = false
         etcdEndPoint                = ""
-        dataInterface               = none
-        managementInterface         = none
+        dataInterface               = ""
+        managementInterface         = ""
         useStork                    = true
         storkVersion                = "2.11.0"
         customRegistryURL           = ""
@@ -64,15 +58,17 @@ locals {
         monitoring                  = false
         enableCSI                   = false
         enableAutopilot             = false
-        KVDBauthSecretName          = none
+        KVDBauthSecretName          = ""
         eksServiceAccount           = "${local.service_account_name}"
         useAWSMarketplace           = false
+        awsAccessKeyId              = ""
+        awsSecretAccessKey          = ""
     },var.chart_values)
   )]
 }
 
 resource "aws_iam_policy" "portworx_eksblueprint_metering" {
-  count = try(var.chart_values.useAWSMarketplace, false)? 1 : 0
+  count = try(var.chart_values.aws.useAWSMarketplace, false)? 1 : 0
   name = "portworx_eksblueprint_metering"
 
   policy = jsonencode({

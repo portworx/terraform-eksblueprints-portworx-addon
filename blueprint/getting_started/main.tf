@@ -103,6 +103,7 @@ module "eks_blueprints" {
       node_group_name           = "eksblueprint_nodegroup_small_1"
       instance_types            = ["t2.small"]
       min_size                  = 2
+      desired_size              = 2
       max_size                  = 2
       subnet_ids                = module.vpc.private_subnets
     }
@@ -123,15 +124,11 @@ module "eks_blueprints_kubernetes_addons" {
 
 
   enable_portworx                     = true
-  portworx_aws_access_key_id          = var.aws_access_key_id
-  portworx_aws_secret_access_key      = var.aws_secret_access_key
-
-  portworx_chart_values               ={      #Pass your custom configuration values for Portworx here
-    clusterName="myfirstcluster"
-    imageVersion="2.11.1"
-    useAWSMarketplace=true
+  portworx_chart_values               ={ 
+    awsAccessKeyId = var.aws_access_key_id
+    awsSecretAccessKey = var.aws_secret_access_key
+    # other custom values
   }
-
-
+  
   tags = local.tags
 }
