@@ -1,7 +1,12 @@
+resource "random_string" "id" {
+  length = 4
+  special = false
+  upper   = false
+}
 locals {
-  name                 = "portworx"
+  name                 = "portworx-${random_string.id.result}"
   namespace            = "kube-system"
-  service_account_name = "${local.name}-sa"
+  service_account_name = "${local.name}-sa-${random_string.id.result}"
 
   set_values = var.set_values
   set_sensitive_values = var.set_sensitive_values
@@ -10,7 +15,7 @@ locals {
     name                       = local.name
     description                = "A Helm chart for portworx"
     chart                      = "portworx"
-    repository                 = "https://raw.githubusercontent.com/portworx/helm/eks-blueprint/repo/staging"
+    repository                 = "https://raw.githubusercontent.com/portworx/eks-blueprint-helm/main/repo/stable"
     version                    = "2.11.0"
     namespace                  = local.namespace
     values                     = local.default_helm_values
@@ -23,7 +28,7 @@ locals {
     var.helm_config
   )
 
- irsa_iam_policies_list= try(var.chart_values.aws.useAWSMarketplace, false) ? concat([aws_iam_policy.portworx_blueprint_metering[0].arn], var.irsa_policies) : var.irsa_policies
+ irsa_iam_policies_list= try(var.chart_values.useAWSMarketplace, false) ? concat([aws_iam_policy.portworx_eksblueprint_metering[0].arn], var.irsa_policies) : var.irsa_policies
 
   irsa_config = {
     create_kubernetes_namespace = false
@@ -40,7 +45,7 @@ locals {
 
   default_helm_values = [templatefile("${path.module}/values.yaml", merge({
         imageVersion                = "2.11.0"
-        clusterName                 = "mycluster"      
+        clusterName                 = local.name     
         drives                      = "type=gp2,size=200"  
         useInternalKVDB             = true
         kvdbDevice                  = "type=gp2,size=150"
@@ -68,8 +73,8 @@ locals {
 }
 
 resource "aws_iam_policy" "portworx_eksblueprint_metering" {
-  count = try(var.chart_values.aws.useAWSMarketplace, false)? 1 : 0
-  name = "portworx_eksblueprint_metering"
+  count = try(var.chart_values.useAWSMarketplace, false)? 1 : 0
+  name = "portworx_eksblueprint_metering-${random_string.id.result}"
 
   policy = jsonencode({
     Version = "2012-10-17"

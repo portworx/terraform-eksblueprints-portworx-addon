@@ -136,6 +136,9 @@ module "eks_blueprints" {
   }
   tags = local.tags
 
+  depends_on = [
+    aws_iam_policy.portworx_eksblueprint_volumeAccess
+  ]
 }
 
 module "eks_blueprints_kubernetes_addons" {
