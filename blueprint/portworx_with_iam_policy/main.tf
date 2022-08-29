@@ -136,10 +136,13 @@ module "eks_blueprints" {
   }
   tags = local.tags
 
+  depends_on = [
+    aws_iam_policy.portworx_eksblueprint_volumeAccess
+  ]
 }
 
 module "eks_blueprints_kubernetes_addons" {
-  source = "github.com/pragrawal10/terraform-aws-eks-blueprints//modules/kubernetes-addons"
+  source = "github.com/portworx/terraform-aws-eks-blueprints//modules/kubernetes-addons"
   eks_cluster_id       = module.eks_blueprints.eks_cluster_id
   eks_cluster_endpoint = module.eks_blueprints.eks_cluster_endpoint
   eks_oidc_provider    = module.eks_blueprints.oidc_provider

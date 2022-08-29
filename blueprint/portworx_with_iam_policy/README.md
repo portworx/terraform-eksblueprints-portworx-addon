@@ -92,6 +92,7 @@ The following tables lists the configurable parameters of the Portworx chart and
 | Parameter | Description | Default |
 |-----------|-------------| --------|
 | `imageVersion` | The image tag to pull | "2.11.0" |
+| `useAWSMarketplace` | Set this variable to true if you wish to use AWS marketplace license for Portworx | "false" |
 | `clusterName` | Portworx Cluster Name| mycluster |
 | `drives` | Semi-colon seperated list of drives to be used for storage. (example: "/dev/sda;/dev/sdb" or "type=gp2,size=200;type=gp3,size=500")  |  "type=gp2,size=200"|
 | `useInternalKVDB` | boolen variable to set internal KVDB on/off | true |

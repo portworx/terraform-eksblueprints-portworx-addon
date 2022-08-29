@@ -115,7 +115,7 @@ module "eks_blueprints" {
 
 module "eks_blueprints_kubernetes_addons" {
  
-  source = "github.com/pragrawal10/terraform-aws-eks-blueprints//modules/kubernetes-addons"
+  source = "github.com/portworx/terraform-aws-eks-blueprints//modules/kubernetes-addons"
   eks_cluster_id       = module.eks_blueprints.eks_cluster_id
   eks_cluster_endpoint = module.eks_blueprints.eks_cluster_endpoint
   eks_oidc_provider    = module.eks_blueprints.oidc_provider
@@ -127,6 +127,7 @@ module "eks_blueprints_kubernetes_addons" {
   portworx_chart_values               ={ 
     awsAccessKeyId = var.aws_access_key_id
     awsSecretAccessKey = var.aws_secret_access_key
+    useAWSMarketplace  = true
     # other custom values
   }
   
