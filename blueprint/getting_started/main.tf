@@ -127,7 +127,6 @@ module "eks_blueprints_kubernetes_addons" {
   portworx_chart_values               ={ 
     awsAccessKeyId = var.aws_access_key_id
     awsSecretAccessKey = var.aws_secret_access_key
-    useAWSMarketplace  = true
     # other custom values
   }
   
