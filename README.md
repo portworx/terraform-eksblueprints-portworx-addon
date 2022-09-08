@@ -2,21 +2,21 @@
 
 ## Introduction
 
-[Portworx](https://portworx.com/) is a Kubernetes data-services platform designed to provide persistent storage, data protection, disaster recovery, and other capabilities for containerized applications. This blueprint installs Portworx on Amazon Elastic Kubernetes Service environment  (AWS EKS).
+[Portworx](https://portworx.com/) is a Kubernetes data services platform that provides persistent storage, data protection, disaster recovery, and other capabilities for containerized applications. This blueprint installs Portworx on Amazon Elastic Kubernetes Service (EKS) environment.
 
 - [Helm chart](https://github.com/portworx/helm)
 
 ## Examples Blueprint
 
-To get started look at these samples [blueprints](blueprints/).
+To get started look at these sample [blueprints](blueprint/).
 
 ## Requirements
 
-For the add-on to work, Portworx need additional permission to AWS resources which can be provided through the following two ways (Also covered in Sample Blueprints) :- 
+For the add-on to work, Portworx needs additional permission to AWS resources which can be provided in the following two ways. The different flows are also covered in [sample blueprints](blueprint/): 
 
-### Method1: Custom IAM policy
+## Method 1: Custom IAM policy
 
-1. Add this code block in your terraform script to create the policy with the required permissions. Keep a note of the resource name for policy you created
+1. Add the below code block in your terraform script to create a policy with the required permissions. Make a note of the resource name for the policy you created: 
 
 ```
 resource "aws_iam_policy" "<policy-resource-name>" {
@@ -55,56 +55,76 @@ resource "aws_iam_policy" "<policy-resource-name>" {
 ```bash
 terraform apply -target="aws_iam_policy.<policy-resource-name>"
 ```
-3. Attach the newly created AWS policy ARN to the node groups in your cluster 
+3. Attach the newly created AWS policy ARN to the node groups in your cluster: 
 
 ```
  managed_node_groups = {
     node_group_1 = {
       node_group_name           = "my_node_group_1"
       instance_types            = ["t2.small"]
-      min_size                  = 1
-      max_size                  = 2
+      min_size                  = 3
+      max_size                  = 3
       subnet_ids                = module.vpc.private_subnets
 
-      #Add this line to the code block or add the new policy ARN to the list if it already exist
+      #Add this line to the code block or add the new policy ARN to the list if it already exists
       additional_iam_policies   = [aws_iam_policy.<policy-resource-name>.arn]
 
     }
   }
 ```
-4 .Run the command below to apply the changes. (This step can be performed even if the cluster is up and running. The policy attachment can happens without restarting the nodes)
+4. Run the command below to apply the changes. (This step can be performed even if the cluster is up and running. The policy attachment happens without having to restart the nodes)
 ```bash
 terraform apply -target="module.eks_blueprints"
 ```
 
-### Method 2: AWS Security Credentials
+## Method 2: AWS Security Credentials
 
-Create a User with the same policy and provide the security credentials AWS access key ID and secret access key to Portworx.
+Create a User with the same policy and generate an AWS access key ID and AWS secret access key pair and share it with Portworx.
  
+It is recommended to pass the above values to the terraform script from your environment variable and is demonstrated below:
 
-Pass the key pair to Portworx by setting these two Environment variable.
+
+1. Pass the key pair to Portworx by setting these two environment variables.
 
 ```
 export TF_VAR_aws_access_key_id=<access-key-id-value>
 export TF_VAR_aws_secret_access_key=<access-key-secret>
 ```
 
-To use Portworx addon with this method, along with ```enable_portworx``` variable, have these two additional variables in ```eks_blueprints_kuberenetes_addons``` module block
+2. To use Portworx add-on with this method, along with ```enable_portworx``` variable, pass these credentials in the following manner:
 
 ```
   enable_portworx                     = true
-  portworx_aws_access_key_id          = var.aws_access_key_id
-  portworx_aws_secret_access_key      = var.aws_secret_access_key
+  
+  portworx_chart_values ={ 
+    awsAccessKeyId = var.aws_access_key_id
+    awsSecretAccessKey = var.aws_secret_access_key
+    
+    # other custom values for Portworx configuration
+}
 
 ```
 
-Terraform will automatically populate the variable ```aws_access_key_id``` and ```aws_secret_access_key``` from the environment variables.
+3. Define these two variables ```aws_access_key_id``` and ```aws_secret_access_key```. Terraform then automatically populates these variables from the environment variables.
 
-Alternatively one can also provide the value of key pair directly to these variables.
+
+```
+variable "aws_access_key_id" {
+  type = string
+  default = ""
+}
+
+variable "aws_secret_access_key" {
+  type = string
+  default = ""
+}
+```
+
+Alternatively, you can also provide the value of the secret key pair directly by hardcoding the values into the script.
 
 ## Usage
 
-After completing the requirement step, installing Portworx is as simple as setting ```enable_portworx``` variable to true inside Kubernetes Addon module
+After completing the requirement step, installing Portworx is simple, set ```enable_portworx``` variable to true inside the Kubernetes add-on module.
 
 ```
 
@@ -122,7 +142,7 @@ module "eks_blueprints_kubernetes_addons" {
 }
 ```
 
-To customise Portworx installation pass the configurations as object like below
+To customize Portworx installation, pass the configuration parameter as an object as shown below:
 
 ```
   enable_portworx         = true
@@ -136,7 +156,7 @@ To customise Portworx installation pass the configurations as object like below
 <!--- BEGIN_TF_DOCS --->
 
 
-## Providers
+## Terraform providers
 
 | Name | Version |
 |------|---------|
@@ -144,7 +164,7 @@ To customise Portworx installation pass the configurations as object like below
 | <a name="provider_kubernetes"></a> [kubernetes](#provider\_kubernetes) | 2.12.1 |
 | <a name="provider_helm"></a> [helm](#provider\_helm) | 2.6.0 |
 
-## Modules
+## Terraform modules
 
 | Name | Source | Version |
 |------|--------|---------|
@@ -153,7 +173,7 @@ To customise Portworx installation pass the configurations as object like below
 ## Resources
 | Name | Type | Required |
 |------|------|----------|
-| [aws_iam_policy.portworx_eksblueprint](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_policy)| resource | no|
+| [aws_iam_policy.portworx_eksblueprint_volumeAccess](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_policy)| resource | yes  if not using AWS credentials |
 
 ## Inputs
 
@@ -161,8 +181,6 @@ To customise Portworx installation pass the configurations as object like below
 |------|-------------|------|---------|:--------:|
 | <a name="input_addon_context"></a> [addon\_context](#input\_addon\_context) | Input configuration for the addon | <pre>object({<br>    aws_caller_identity_account_id = string<br>    aws_caller_identity_arn        = string<br>    aws_eks_cluster_endpoint       = string<br>    aws_partition_id               = string<br>    aws_region_name                = string<br>    eks_cluster_id                 = string<br>    eks_oidc_issuer_url            = string<br>    eks_oidc_provider_arn          = string<br>    tags                           = map(string)<br>  })</pre> | n/a | yes |
 | <a name="input_chart_values"></a> [chart\_values](#input\_chart\_values) | Custom values for the Portworx Helm chart | `any` | `{}` | no |
-| <a name="input_aws_access_key_id"></a> [aws\_access\_key\_id](#input\_aws\_access\_key\_id) | AWS access key id value (Not required if using IAM policy to give access. Required otherwise. )| `string` | `` | no |
-| <a name="input_aws_secret_access_key"></a> [aws\_secret\_access\_key](#input\_aws\_secret\_access\_key) | AWS secret access key value (Not required if using IAM policy to give access)| `string` | `` | no |
 | <a name="input_helm_config"></a> [helm\_config](#input\_helm\_config) | Helm provider config for the Portworx | `any` | `{}` | no |
 | <a name="input_set_values"></a> [set\_values](#input\_set\_values) | Forced set values for Portworx Helm chart | `any` | `[]` | no |
 | <a name="input_set_sensitive_values"></a> [set\_sensitive\_values](#input\_set\_sensitive\_values) | Forced set sensitive values for Portworx Helm chart | `any` | `[]` | no |
@@ -170,9 +188,10 @@ To customise Portworx installation pass the configurations as object like below
 | <a name="input_irsa_policies"></a> [irsa\_policies](#input\_irsa\_policies) | IAM policy ARNs for Portworx IRSA | `list(string)` | `[]` | no |
 | <a name="input_manage_via_gitops"></a> [manage\_via\_gitops](#input\_manage\_via\_gitops) | Determines if the add-on should be managed via GitOps. | `bool` | `false` | no |
 
-## Outputs
+<!-- ## Outputs
 
 | Name | Description |
 |------|-------------|
-| <a name="output_argocd_gitops_config"></a> [argocd\_gitops\_config](#output\_argocd\_gitops\_config) | Configuration used for managing the add-on with ArgoCD |
+| <a name="output_argocd_gitops_config"></a> [argocd\_gitops\_config](#output\_argocd\_gitops\_config) | Configuration used for managing the add-on with ArgoCD | -->
+
 <!--- END_TF_DOCS --->

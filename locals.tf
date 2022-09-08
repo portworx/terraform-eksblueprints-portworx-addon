@@ -68,6 +68,7 @@ locals {
         useAWSMarketplace           = false
         awsAccessKeyId              = ""
         awsSecretAccessKey          = ""
+        deleteType                  = "UninstallAndWipe"
     },var.chart_values)
   )]
 }
