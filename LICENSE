@@ -1,1 +1,0 @@
-terraform plan -target="module.eks_blueprints_kubernetes_addons"
