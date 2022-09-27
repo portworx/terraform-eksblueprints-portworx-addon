@@ -34,7 +34,7 @@ git clone https://github.com/portworx/terraform-eksblueprints-portworx-addon.git
 #### Step 2. Initialize the Terraform module:
 
 ```shell
-cd blueprints/getting_started
+cd blueprint/portworx_with_iam_policy
 terraform init
 ```
 
