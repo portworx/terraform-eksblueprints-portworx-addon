@@ -124,10 +124,18 @@ module "eks_blueprints_kubernetes_addons" {
 
 
   enable_portworx                     = true
-  portworx_chart_values               ={ 
-    awsAccessKeyId = var.aws_access_key_id
-    awsSecretAccessKey = var.aws_secret_access_key
-    # other custom values
+  
+  portworx_helm_config = {
+    set = [
+    {
+      name  = "awsAccessKeyId"
+      value = var.aws_access_key_id
+    },
+    {
+      name= "awsSecretAccessKey"
+      value= var.aws_secret_access_key
+    }
+    ]
   }
   
   tags = local.tags

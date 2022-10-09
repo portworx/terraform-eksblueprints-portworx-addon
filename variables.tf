@@ -4,36 +4,6 @@ variable "helm_config" {
   default     = {}
 }
 
-variable "chart_values" {
-  description = "custom values for the chart"
-  type        = any
-  default     = {}
-}
-
-variable "set_values" {
-  description = "Forced set values"
-  type        = any
-  default     = []
-}
-
-variable "set_sensitive_values" {
-  description = "Forced set_sensitive values"
-  type        = any
-  default     = []
-}
-
-variable "manage_via_gitops" {
-  description = "Determines if the add-on should be managed via GitOps"
-  type        = bool
-  default     = false
-}
-
-variable "irsa_policies" {
-  description = "Additional IAM policy ARNs for Portworx IRSA"
-  type        = list(string)
-  default     = []
-}
-
 variable "irsa_config" {
   description = "Input configuration for IRSA module"
   type = object({
