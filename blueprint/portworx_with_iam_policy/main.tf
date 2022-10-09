@@ -154,10 +154,6 @@ module "eks_blueprints_kubernetes_addons" {
     {
       name  = "imageVersion"
       value = "2.11.2"
-    },
-    {
-      name= "deleteType"
-      value= "UninstallAndWipe"
     }
     ]
   }
