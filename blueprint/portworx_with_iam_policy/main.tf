@@ -149,9 +149,14 @@ module "eks_blueprints_kubernetes_addons" {
   eks_cluster_version  = module.eks_blueprints.eks_cluster_version
 
   enable_portworx      = true
-  portworx_chart_values={
-    clusterName = "test-1"
-    imageVersion = "2.11.2"
+  portworx_helm_config = {
+    set = [
+    {
+      name  = "imageVersion"
+      value = "2.11.2"
+    }
+    ]
   }
+
   tags = local.tags
 }

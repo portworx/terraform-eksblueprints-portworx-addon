@@ -105,7 +105,7 @@ serviceAccount:
     name: 
 
 aws:  
-  marketplace: ${useAWSMarketplace}
+  marketplace:
   eksServiceAccount: ${eksServiceAccount}
   accessKeyId: ${awsAccessKeyId}
   secretAccessKey: ${awsSecretAccessKey}

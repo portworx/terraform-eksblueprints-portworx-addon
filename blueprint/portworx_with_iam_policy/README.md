@@ -123,9 +123,12 @@ This section describes how to uninstall Portworx and remove its Kubernetes specs
 1. Start by choosing between one of two deleteStrategy option and updating the terraform script.
 
 ```
-portworx_chart_values = { 
-    deleteType =    # Valid values: "Uninstall" and "UninstallAndWipe"
-    # other custom values
+portworx_helm_config = {
+    set = [
+    {
+        name= "deleteType"  
+        value= "UninstallAndWipe"  # Valid values: "Uninstall" and "UninstallAndWipe"
+    }]
 }
 ```
 
