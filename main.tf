@@ -1,4 +1,4 @@
-module "helm_addon"{
+module "helm_addon" {
   source = "github.com/aws-ia/terraform-aws-eks-blueprints//modules/kubernetes-addons/helm-addon"
 
   addon_context = var.addon_context
