@@ -126,7 +126,7 @@ module "eks_blueprints_kubernetes_addons" {
   enable_portworx = true
 
   portworx_helm_config = {
-    set = [
+    set_sensitive = [
       {
         name  = "awsAccessKeyId"
         value = var.aws_access_key_id
