@@ -8,11 +8,13 @@ variable "cluster_name" {
 variable "aws_access_key_id" {
   type    = string
   default = ""
+  sensitive = true
 }
 
 variable "aws_secret_access_key" {
   type    = string
   default = ""
+  sensitive = true
 }
 
 
