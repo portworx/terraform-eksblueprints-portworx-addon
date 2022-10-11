@@ -3,6 +3,7 @@ resource "random_string" "id" {
   special = false
   upper   = false
 }
+
 locals {
   name                 = "portworx-${random_string.id.result}"
   namespace            = "kube-system"
