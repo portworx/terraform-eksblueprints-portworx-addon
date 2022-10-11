@@ -4,13 +4,8 @@ variable "helm_config" {
   default     = {}
 }
 
-variable "irsa_config" {
-  description = "Input configuration for IRSA module"
-  type        = any
-  default     = {}
-}
-
 variable "addon_context" {
   description = "Input configuration for the addon"
   type        = any
+  default     = {}
 }
