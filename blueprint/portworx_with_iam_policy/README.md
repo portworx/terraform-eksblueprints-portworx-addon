@@ -88,34 +88,32 @@ Result: A storage cluster with set name becomes active which implies Portworx cl
 
 ## Portworx Configuration
 
-The following tables lists the configurable parameters of the Portworx chart and their default values.
+
 
 | Parameter | Description | Default |
 |-----------|-------------| --------|
 | `imageVersion` | The image tag to pull | "2.11.0" |
-| `useAWSMarketplace` | Set this variable to true if you wish to use AWS marketplace license for Portworx | "false" |
+| `aws.marketplace` | Set this variable to true if you intend to use AWS marketplace license for Portworx | "false" |
 | `clusterName` | Portworx Cluster Name| mycluster |
-| `drives` | Semi-colon seperated list of drives to be used for storage. (example: "/dev/sda;/dev/sdb" or "type=gp2,size=200;type=gp3,size=500")  |  "type=gp2,size=200"|
-| `useInternalKVDB` | boolen variable to set internal KVDB on/off | true |
-| `kvdbDevice` | specify a separate device to store KVDB data, only used when internalKVDB is set to true | type=gp2,size=150 |
-| `envVars` | semi-colon-separated list of environment variables that will be exported to portworx. (example: MYENV1=val1;MYENV2=val2) | "" |
+| `drives` | Semicolon separated list of drives to be used for storage. (example: "/dev/sda;/dev/sdb" or "type=gp2,size=200;type=gp3,size=500")  |  "type=gp2,size=200"|
+| `internalKVDB` | Boolean variable to set internal KVDB on/off | true |
+| `kvdbDevice` | specify a separate device to store KVDB data, only used when internalKVDB is set to true | type=gp2;size=150 |
+| `envVars` | Semicolon separated list of environment variables that are going to be exported to Portworx. (example: MYENV1=val1;MYENV2=val2) | "" |
 | `maxStorageNodesPerZone` | The maximum number of storage nodes desired per zone| 3 |
-| `useOpenshiftInstall` | boolen variable to install Portworx on Openshift .| false |
-| `etcdEndPoint` | The ETCD endpoint. Should be in the format etcd:http://(your-etcd-endpoint):2379. If there are multiple etcd endpoints they need to be ";" seperated. | "" |
-| `dataInterface` | Name of the interface <ethX>.| none |
-| `managementInterface` |  Name of the interface <ethX>.| none |
-| `useStork` | [Storage Orchestration for Hyperconvergence](https://github.com/libopenstorage/stork).| true  |
-| `storkVersion` | Optional: version of Stork. For eg: 2.11.0, when it's empty Portworx operator will pick up version according to Portworx version. | "2.11.0" |
+| `openshiftInstall` | boolean variable to install Portworx on Openshift .| false |
+| `etcdEndPoint` | The ETCD endpoint. Should be in the format etcd:http://(your-etcd-endpoint):2379. If there are multiple etcd endpoints they need to be semicolon separated. | "" |
+| `dataInterface` | Name of the interface ```<ethX>```.| none |
+| `managementInterface` |  Name of the interface ```<ethX>```.| none |
+| `stork` | Boolean variable to enable Stork. [Storage Orchestration for Hyperconvergence](https://github.com/libopenstorage/stork).| true  |
+| `storkVersion` | Optional: version of Stork. For example: 2.11.0, when it's empty Portworx operator picks up the version based on the Portworx version. | "2.11.0" |
 | `customRegistryURL` | URL where to pull Portworx image from | ""  |
-| `registrySecret` | Image registery credentials to pull Portworx Images from a secure registry | "" |
+| `registrySecret` | Image registry credentials to pull Portworx Images from a secure registry | "" |
 | `licenseSecret` | Kubernetes secret name that has Portworx licensing information | ""  |
 | `monitoring` | Enable Monitoring on Portworx cluster | false  |
-| `enableCSI` | Enable CSI | false  |
-| `enableAutopilot` | Enable Autopilot | false  |
-| `KVDBauthSecretName` | Refer https://docs.portworx.com/reference/etcd/securing-with-certificates-in-kubernetes to  create a kvdb secret and specify the name of the secret here| none |
+| `csi` | Boolen variable to enable CSI | false  |
+| `aut` | Boolen variable to enable Autopilot | false  |
+| `kvdb.authSecretName` | Refer https://docs.portworx.com/reference/etcd/securing-with-certificates-in-kubernetes to  create a kvdb secret and specify the name of the secret here| none |
 | `deleteType` | Specify which strategy to use while Uninstalling Portworx. "Uninstall" values only removes Portworx but with "UninstallAndWipe" value all data from your disks including the Portworx metadata is also wiped permanently | UninstallAndWipe |
-
-
 ## Uninstalling Portworx:
 
 This section describes how to uninstall Portworx and remove its Kubernetes specs. When uninstalling, you may choose to either keep the the data on your drives, or wipe them completely.

@@ -9,16 +9,8 @@ locals {
   namespace            = "kube-system"
   service_account_name = "${local.name}-sa-${random_string.id.result}"
 
-  aws_marketplace_config = try(var.helm_config["set"][index(var.helm_config.set.*.name, "useAWSMarketplace")], null)
+  aws_marketplace_config = try(var.helm_config["set"][index(var.helm_config.set.*.name, "aws.marketplace")], null)
   use_aws_marketplace    = local.aws_marketplace_config != null ? local.aws_marketplace_config["value"] : false
-
-  set_values = [
-    {
-      name  = "useAWSMarketplace"
-      value = local.use_aws_marketplace
-    }
-  ]
-
 
   default_helm_config = {
     name        = local.name
