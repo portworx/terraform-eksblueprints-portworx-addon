@@ -99,11 +99,11 @@ export TF_VAR_aws_secret_access_key=<access-key-secret>
   portworx_helm_config = {
     set_sensitive = [
       {
-        name  = "awsAccessKeyId"
+        name  = "aws.accessKeyId"
         value = var.aws_access_key_id
       },
       {
-        name  = "awsSecretAccessKey"
+        name  = "aws.secretAccessKey"
         value = var.aws_secret_access_key
       }
     ]
@@ -144,17 +144,17 @@ module "eks_blueprints_kubernetes_addons" {
 
 
   #Add this line to enable Portworx      
-  enable_portworx                     = true
+  enable_portworx  = true
 }
 ```
 
 To customize Portworx installation, pass the configuration parameter as an list of objects as shown below:
 
 ```
-  enable_portworx         = true
+  enable_portworx  = true
   
   portworx_helm_config = {
-    set_sensitive = [
+    set = [
       {
         name  = "clusterName"
         value = "testCluster"

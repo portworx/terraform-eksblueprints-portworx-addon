@@ -96,6 +96,7 @@ module "eks_blueprints" {
       node_group_name = "eksblueprint_nodegroup_med_1"
       instance_types  = ["t2.medium"]
       min_size        = 3
+      desired_size    = 3
       max_size        = 3
       subnet_ids      = module.vpc.private_subnets
     }
@@ -121,18 +122,16 @@ module "eks_blueprints_kubernetes_addons" {
   eks_oidc_provider    = module.eks_blueprints.oidc_provider
   eks_cluster_version  = module.eks_blueprints.eks_cluster_version
 
-
-
   enable_portworx = true
 
   portworx_helm_config = {
     set_sensitive = [
       {
-        name  = "awsAccessKeyId"
+        name  = "aws.accessKeyId"
         value = var.aws_access_key_id
       },
       {
-        name  = "awsSecretAccessKey"
+        name  = "aws.secretAccessKey"
         value = var.aws_secret_access_key
       }
     ]
