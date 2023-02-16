@@ -22,8 +22,8 @@ locals {
     name        = local.name
     description = "A Helm chart for portworx"
     chart       = "portworx"
-    repository  = "https://raw.githubusercontent.com/portworx/eks-blueprint-helm/namespace/repo/beta"
-    version     = "2.12.0"
+    repository  = "https://raw.githubusercontent.com/portworx/eks-blueprint-helm/namespace/repo/stable"
+    version     = "2.12.2"
     namespace   = local.namespace
     values      = local.default_helm_values
   }
@@ -44,12 +44,12 @@ locals {
   }
 
   default_helm_values = [templatefile("${path.module}/values.yaml", {
-    imageVersion           = "2.12.0"
+    imageVersion           = "2.12.2"
     clusterName            = local.name
     drives                 = "type=gp2+size=200"
     useInternalKVDB        = true
     kvdbDevice             = "type=gp2,size=150"
-    pxOperatorImageVersion = "1.10.0"
+    pxOperatorImageVersion = "1.10.3"
     envVars                = ""
     maxStorageNodesPerZone = 3
     useOpenshiftInstall    = false
@@ -57,7 +57,7 @@ locals {
     dataInterface          = ""
     managementInterface    = ""
     useStork               = true
-    storkVersion           = "2.12.0"
+    storkVersion           = "2.12.2"
     customRegistryURL      = ""
     registrySecret         = ""
     licenseSecret          = ""
@@ -68,7 +68,7 @@ locals {
     eksServiceAccount      = "${local.service_account_name}"
     awsAccessKeyId         = ""
     awsSecretAccessKey     = ""
-    deleteType             = "UninstallAndWipe"
+    deleteType             = "Uninstall"
     awsProduct             = "PX-ENTERPRISE"
     namespace              = "kube-system"
     create_namespace       = false
