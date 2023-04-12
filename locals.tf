@@ -10,7 +10,7 @@ locals {
   custom_namespace        = try(var.helm_config["set"][index(var.helm_config.set.*.name, "namespace")], null)
   namespace               = local.custom_namespace != null ? local.custom_namespace["value"] : "kube-system"
   
-  create_namespace_flag   = try(var.helm_config["set"][index(var.helm_config.set.*.name, "create_namespace")], null)
+  create_namespace_flag   = try(var.helm_config["set"][index(var.helm_config.set.*.name, "createNamespace")], null)
   create_namespace        = local.create_namespace_flag != null ? local.create_namespace_flag["value"] : false
 
   service_account_name    = "${local.name}-sa-${random_string.id.result}"
@@ -22,7 +22,7 @@ locals {
     name        = local.name
     description = "A Helm chart for portworx"
     chart       = "portworx"
-    repository  = "https://raw.githubusercontent.com/portworx/eks-blueprint-helm/namespace/repo/stable"
+    repository  = "https://raw.githubusercontent.com/portworx/eks-blueprint-helm/main/repo/stable"
     version     = "2.12.2"
     namespace   = local.namespace
     values      = local.default_helm_values
@@ -71,7 +71,7 @@ locals {
     deleteType             = "Uninstall"
     awsProduct             = "PX-ENTERPRISE"
     namespace              = "kube-system"
-    create_namespace       = false
+    createNamespace        = false
     }
   )]
 }

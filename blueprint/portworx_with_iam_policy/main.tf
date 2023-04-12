@@ -119,7 +119,7 @@ module "eks_blueprints" {
   source = "github.com/aws-ia/terraform-aws-eks-blueprints"
 
   cluster_name    = local.cluster_name
-  cluster_version = "1.22"
+  cluster_version = "1.25"
 
   vpc_id             = module.vpc.vpc_id
   private_subnet_ids = module.vpc.private_subnets
@@ -152,8 +152,16 @@ module "eks_blueprints_kubernetes_addons" {
   portworx_helm_config = {
     set = [
       {
-        name  = "imageVersion"
-        value = "2.11.2"
+        name  = "namespace"
+        value = "portworx"
+      },
+      {
+        name = "createNamespace"
+        value = "true"
+      },
+      {
+         name= "deleteType"  
+        value= "UninstallAndWipe"
       }
     ]
   }

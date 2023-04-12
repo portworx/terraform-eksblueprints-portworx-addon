@@ -88,8 +88,11 @@ The following table lists the configurable parameters of the Portworx chart and 
 
 | Parameter | Description | Default |
 |-----------|-------------| --------|
-| `imageVersion` | The image tag to pull | "2.11.0" |
+| `imageVersion` | The image tag to pull | "2.12.2" |
 | `aws.marketplace` | Set this variable to true if you intend to use AWS marketplace license for Portworx | "false" |
+| `clusterName` | Portworx Cluster Name| mycluster |
+| `namespace` | Namespace to deploy Portworx cluster on | kube-system |
+| `createNamespace` |  Set Boolean variable to true when you want to create a new namespace (with the name passed in "namespace" variable) or false if the namespace already exists | false |
 | `clusterName` | Portworx Cluster Name| mycluster |
 | `drives` | Semicolon separated list of drives to be used for storage. (example: "/dev/sda;/dev/sdb" or "type=gp2,size=200;type=gp3,size=500")  |  "type=gp2,size=200"|
 | `internalKVDB` | Boolean variable to set internal KVDB on/off | true |
