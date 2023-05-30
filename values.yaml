@@ -4,7 +4,7 @@
 awsProduct: ${awsProduct}                #This is the default.
 
 namespace: ${namespace}                 # Namespace where Portworx cluster will be deployed
-create_namespace: ${create_namespace}   # Set to true when you want the namespace passed above doesnt exits and is to be created by the terraform script. Installation fails if the namespace already exists and the variable is set to true.
+createNamespace: ${createNamespace}   # Set to true when you want the namespace passed above doesnt exits and is to be created by the terraform script. Installation fails if the namespace already exists and the variable is set to true.
 
 deployOperator: true                    # Deploy the Portworx operator
 deployCluster: true                     # Deploy the Portworx cluster

@@ -23,7 +23,7 @@ locals {
     description = "A Helm chart for portworx"
     chart       = "portworx"
     repository  = "https://raw.githubusercontent.com/portworx/eks-blueprint-helm/main/repo/stable"
-    version     = "2.12.2"
+    version     = "2.13.5"
     namespace   = local.namespace
     values      = local.default_helm_values
   }
@@ -44,12 +44,12 @@ locals {
   }
 
   default_helm_values = [templatefile("${path.module}/values.yaml", {
-    imageVersion           = "2.12.2"
+    imageVersion           = "2.13.5"
     clusterName            = local.name
     drives                 = "type=gp2+size=200"
     useInternalKVDB        = true
     kvdbDevice             = "type=gp2,size=150"
-    pxOperatorImageVersion = "1.10.3"
+    pxOperatorImageVersion = "23.4.0"
     envVars                = ""
     maxStorageNodesPerZone = 3
     useOpenshiftInstall    = false
@@ -57,12 +57,12 @@ locals {
     dataInterface          = ""
     managementInterface    = ""
     useStork               = true
-    storkVersion           = "2.12.2"
+    storkVersion           = "23.4.0"
     customRegistryURL      = ""
     registrySecret         = ""
     licenseSecret          = ""
     monitoring             = false
-    enableCSI              = false
+    enableCSI              = true
     enableAutopilot        = false
     KVDBauthSecretName     = ""
     eksServiceAccount      = "${local.service_account_name}"

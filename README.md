@@ -161,7 +161,7 @@ To customize Portworx installation, pass the configuration parameter as an list 
       },
       {
         name  = "imageVersion"
-        value = "2.11.1"
+        value = "2.13.4"
       }
     ]
   }
