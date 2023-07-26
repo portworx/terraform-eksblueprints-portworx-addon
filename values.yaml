@@ -107,9 +107,9 @@ tolerations:                          # Add tolerations
 serviceAccount:
   hook:
     create: true
-    name: 
+    name:
 
-aws:  
+aws:
   marketplace: false                        #Set to True if you want to use AWS Marketplace license with Portworx. Make sure you subscribe to the correct Portworx product lsiting from the markettplace and then perform installation
   eksServiceAccount: ${eksServiceAccount}   # Name of the service account with Metering Permission used to send Billing data to AWS Marketplace. Default the service account is created automatically when aws.marketplace is set to true and correct value is passed to this parameter
   accessKeyId: ${awsAccessKeyId}
