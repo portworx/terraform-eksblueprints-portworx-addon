@@ -5,9 +5,15 @@ resource "random_string" "id" {
 }
 
 locals {
-  name                 = "portworx-${random_string.id.result}"
-  namespace            = "kube-system"
-  service_account_name = "${local.name}-sa-${random_string.id.result}"
+  name                    = "portworx-${random_string.id.result}"
+
+  custom_namespace        = try(var.helm_config["set"][index(var.helm_config.set.*.name, "namespace")], null)
+  namespace               = local.custom_namespace != null ? local.custom_namespace["value"] : "kube-system"
+  
+  create_namespace_flag   = try(var.helm_config["set"][index(var.helm_config.set.*.name, "createNamespace")], null)
+  create_namespace        = local.create_namespace_flag != null ? local.create_namespace_flag["value"] : false
+
+  service_account_name    = "${local.name}-sa-${random_string.id.result}"
 
   aws_marketplace_config = try(var.helm_config["set"][index(var.helm_config.set.*.name, "aws.marketplace")], null)
   use_aws_marketplace    = local.aws_marketplace_config != null ? local.aws_marketplace_config["value"] : false
@@ -17,7 +23,7 @@ locals {
     description = "A Helm chart for portworx"
     chart       = "portworx"
     repository  = "https://raw.githubusercontent.com/portworx/eks-blueprint-helm/main/repo/stable"
-    version     = "2.11.0"
+    version     = "2.13.5"
     namespace   = local.namespace
     values      = local.default_helm_values
   }
@@ -30,7 +36,7 @@ locals {
   irsa_iam_policies_list = local.use_aws_marketplace != false ? [aws_iam_policy.portworx_eksblueprint_metering[0].arn] : []
 
   irsa_config = {
-    create_kubernetes_namespace       = false
+    create_kubernetes_namespace       = local.create_namespace
     kubernetes_namespace              = local.namespace
     create_kubernetes_service_account = true
     kubernetes_service_account        = "${local.service_account_name}"
@@ -38,11 +44,12 @@ locals {
   }
 
   default_helm_values = [templatefile("${path.module}/values.yaml", {
-    imageVersion           = "2.11.0"
+    imageVersion           = "2.13.5"
     clusterName            = local.name
-    drives                 = "type=gp2,size=200"
+    drives                 = "type=gp2+size=200"
     useInternalKVDB        = true
     kvdbDevice             = "type=gp2,size=150"
+    pxOperatorImageVersion = "23.4.0"
     envVars                = ""
     maxStorageNodesPerZone = 3
     useOpenshiftInstall    = false
@@ -50,18 +57,21 @@ locals {
     dataInterface          = ""
     managementInterface    = ""
     useStork               = true
-    storkVersion           = "2.11.0"
+    storkVersion           = "23.4.0"
     customRegistryURL      = ""
     registrySecret         = ""
     licenseSecret          = ""
     monitoring             = false
-    enableCSI              = false
+    enableCSI              = true
     enableAutopilot        = false
     KVDBauthSecretName     = ""
     eksServiceAccount      = "${local.service_account_name}"
     awsAccessKeyId         = ""
     awsSecretAccessKey     = ""
-    deleteType             = "UninstallAndWipe"
+    deleteType             = "Uninstall"
+    awsProduct             = "PX-ENTERPRISE"
+    namespace              = "kube-system"
+    createNamespace        = false
     }
   )]
 }

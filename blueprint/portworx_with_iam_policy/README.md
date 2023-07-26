@@ -52,7 +52,7 @@ terraform apply -target="module.vpc"
 ```
 Deploy custom IAM policy.
 ```
-terraform apply -target="aws_iam_policy.portworx_eksblueprint_volumeAccess"
+terraform apply -target="aws_iam_policy.portworx_eksblueprint_volume_access"
 ```
 Deploy the EKS cluster. This step will take roughly 14 minutes to complete.
 ```
@@ -92,12 +92,15 @@ Result: A storage cluster with set name becomes active which implies Portworx cl
 
 | Parameter | Description | Default |
 |-----------|-------------| --------|
-| `imageVersion` | The image tag to pull | "2.11.0" |
+| `imageVersion` | The image tag to pull | "2.13.5" |
 | `aws.marketplace` | Set this variable to true if you intend to use AWS marketplace license for Portworx | "false" |
 | `clusterName` | Portworx Cluster Name| mycluster |
-| `drives` | Semicolon separated list of drives to be used for storage. (example: "/dev/sda;/dev/sdb" or "type=gp2,size=200;type=gp3,size=500")  |  "type=gp2,size=200"|
+| `namespace` | Namespace to deploy Portworx cluster on | kube-system |
+| `createNamespace` |  Set Boolean variable to true when you want to create a new namespace (with the name passed in "namespace" variable) or false if the namespace already exists | false |
+| `clusterName` | Portworx Cluster Name| mycluster |
+| `drives` | Semicolon separated list of drives to be used for storage. (example: "/dev/sda;/dev/sdb" or "type=gp2+size=200;type=gp3+size=500")  |  "type=gp2+size=200"|
 | `internalKVDB` | Boolean variable to set internal KVDB on/off | true |
-| `kvdbDevice` | specify a separate device to store KVDB data, only used when internalKVDB is set to true | type=gp2;size=150 |
+| `kvdbDevice` | specify a separate device to store KVDB data, only used when internalKVDB is set to true | type=gp2,size=150 |
 | `envVars` | Semicolon separated list of environment variables that are going to be exported to Portworx. (example: MYENV1=val1;MYENV2=val2) | "" |
 | `maxStorageNodesPerZone` | The maximum number of storage nodes desired per zone| 3 |
 | `openshiftInstall` | boolean variable to install Portworx on Openshift .| false |
@@ -105,15 +108,15 @@ Result: A storage cluster with set name becomes active which implies Portworx cl
 | `dataInterface` | Name of the interface ```<ethX>```.| none |
 | `managementInterface` |  Name of the interface ```<ethX>```.| none |
 | `stork` | Boolean variable to enable Stork. [Storage Orchestration for Hyperconvergence](https://github.com/libopenstorage/stork).| true  |
-| `storkVersion` | Optional: version of Stork. For example: 2.11.0, when it's empty Portworx operator picks up the version based on the Portworx version. | "2.11.0" |
+| `storkVersion` | Optional: version of Stork. For example: 2.13.5, when it's empty Portworx operator picks up the version based on the Portworx version. | "2.13.5" |
 | `customRegistryURL` | URL where to pull Portworx image from | ""  |
 | `registrySecret` | Image registry credentials to pull Portworx Images from a secure registry | "" |
 | `licenseSecret` | Kubernetes secret name that has Portworx licensing information | ""  |
 | `monitoring` | Enable Monitoring on Portworx cluster | false  |
-| `csi` | Boolen variable to enable CSI | false  |
+| `csi` | Boolen variable to enable CSI | true  |
 | `aut` | Boolen variable to enable Autopilot | false  |
 | `kvdb.authSecretName` | Refer https://docs.portworx.com/reference/etcd/securing-with-certificates-in-kubernetes to  create a kvdb secret and specify the name of the secret here| none |
-| `deleteType` | Specify which strategy to use while Uninstalling Portworx. "Uninstall" values only removes Portworx but with "UninstallAndWipe" value all data from your disks including the Portworx metadata is also wiped permanently | UninstallAndWipe |
+| `deleteType` | Specify which strategy to use while Uninstalling Portworx. "Uninstall" values only removes Portworx but with "UninstallAndWipe" value all data from your disks including the Portworx metadata is also wiped permanently | Uninstall |
 ## Uninstalling Portworx:
 
 This section describes how to uninstall Portworx and remove its Kubernetes specs. When uninstalling, you may choose to either keep the the data on your drives, or wipe them completely.
@@ -157,7 +160,7 @@ terraform destroy -target="module.eks_blueprints"
 #### Destroy the IAM policy.
 
 ```hcl
-terraform destroy -target="aws_iam_policy.portworx_eksblueprint_volumeAccess"
+terraform destroy -target="aws_iam_policy.portworx_eksblueprint_volume_access"
 ```
 
 #### Destroy the VPC.

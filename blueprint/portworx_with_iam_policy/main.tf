@@ -80,8 +80,14 @@ module "vpc" {
 # Custom IAM roles for Node Groups
 #---------------------------------------------------------------
 
-resource "aws_iam_policy" "portworx_eksblueprint_volumeAccess" {
-  name = "portworx_eksblueprint_volumeAccess"
+resource "random_string" "id" {
+  length  = 4
+  special = false
+  upper   = false
+}
+
+resource "aws_iam_policy" "portworx_eksblueprint_volume_access" {
+  name = "portworx_eksblueprint_volumeAccess-${random_string.id.result}"
 
   policy = jsonencode({
     Version = "2012-10-17"
@@ -119,7 +125,7 @@ module "eks_blueprints" {
   source = "github.com/aws-ia/terraform-aws-eks-blueprints?ref=v4.32.0"
 
   cluster_name    = local.cluster_name
-  cluster_version = "1.22"
+  cluster_version = "1.25"
 
   vpc_id             = module.vpc.vpc_id
   private_subnet_ids = module.vpc.private_subnets
@@ -131,13 +137,13 @@ module "eks_blueprints" {
       min_size                = 3
       max_size                = 3
       subnet_ids              = module.vpc.private_subnets
-      additional_iam_policies = [aws_iam_policy.portworx_eksblueprint_volumeAccess.arn]
+      additional_iam_policies = [aws_iam_policy.portworx_eksblueprint_volume_access.arn]
     }
   }
   tags = local.tags
 
   depends_on = [
-    aws_iam_policy.portworx_eksblueprint_volumeAccess
+    aws_iam_policy.portworx_eksblueprint_volume_access
   ]
 }
 
@@ -152,8 +158,12 @@ module "eks_blueprints_kubernetes_addons" {
   portworx_helm_config = {
     set = [
       {
-        name  = "imageVersion"
-        value = "2.11.2"
+        name  = "namespace"
+        value = "portworx"
+      },
+      {
+        name = "createNamespace"
+        value = true
       }
     ]
   }
