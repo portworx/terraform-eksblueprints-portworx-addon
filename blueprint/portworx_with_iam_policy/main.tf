@@ -3,7 +3,7 @@ provider "aws" {
 }
 
 locals {
-  name         = "portworx-eks-iam-policy"
+  name         = "pallav-1"
   cluster_name = coalesce(var.cluster_name, local.name)
   region       = "us-east-1"
 
@@ -12,6 +12,7 @@ locals {
 
   tags = {
     Blueprint  = local.name
+    expiresOn = 13-10-2023
     GithubRepo = "github.com/aws-ia/terraform-aws-eks-blueprints"
   }
 }
@@ -122,7 +123,7 @@ module "eks" {
   version = "~> 19.13"
 
   cluster_name    = local.name
-  cluster_version = "1.26"
+  cluster_version = "1.27"
 
   # EKS Addons
   cluster_addons = {
@@ -135,7 +136,7 @@ module "eks" {
   cluster_endpoint_public_access = true
   eks_managed_node_groups = {
     initial = {
-      instance_types = ["t2.2xlarge"]
+      instance_types = ["t2.medium"]
       min_size       = 3
       max_size       = 3
       desired_size   = 3

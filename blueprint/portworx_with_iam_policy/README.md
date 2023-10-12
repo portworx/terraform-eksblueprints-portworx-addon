@@ -56,7 +56,7 @@ terraform apply -target="aws_iam_policy.portworx_eksblueprint_volume_access"
 ```
 Deploy the EKS cluster. This step will take roughly 14 minutes to complete.
 ```
-terraform apply -target="module.eks_blueprints"
+terraform apply -target="module.eks"
 ```
 Deploy the add-ons. This step will take rough 5 minutes to complete.
 ```
@@ -155,7 +155,7 @@ terraform destroy -target="module.eks_blueprints_kubernetes_addons"
 #### Destroy the EKS cluster.
 
 ```hcl
-terraform destroy -target="module.eks_blueprints"
+terraform destroy -target="module.eks"
 ```
 #### Destroy the IAM policy.
 
