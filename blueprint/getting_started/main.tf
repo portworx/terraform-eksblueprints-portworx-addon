@@ -12,7 +12,6 @@ locals {
 
   tags = {
     Blueprint  = local.name
-    GithubRepo = "github.com/aws-ia/terraform-aws-eks-blueprints"
   }
 }
 
@@ -30,9 +29,9 @@ provider "helm" {
   }
 }
 
-data "aws_eks_cluster_auth" "this" {
-  name = module.eks_blueprints.eks_cluster_id
-}
+# data "aws_eks_cluster_auth" "this" {
+#   name = module.eks_blueprints.eks_cluster_id
+# }
 
 data "aws_availability_zones" "available" {}
 
@@ -43,7 +42,7 @@ data "aws_availability_zones" "available" {}
 
 module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
-  version = "~> 3.0"
+  version = "~> 5.0"
 
   name = local.name
   cidr = local.vpc_cidr
@@ -78,64 +77,92 @@ module "vpc" {
 }
 
 
-#---------------------------------------------------------------
-# EKS Blueprints
-#---------------------------------------------------------------
+# #---------------------------------------------------------------
+# # EKS Blueprints
+# #---------------------------------------------------------------
 
-module "eks_blueprints" {
-  source = "github.com/aws-ia/terraform-aws-eks-blueprints?ref=v4.32.0"
+# module "eks_blueprints" {
+#   source = "github.com/aws-ia/terraform-aws-eks-blueprints?ref=v4.32.0"
+
+#   cluster_name    = local.cluster_name
+#   cluster_version = "1.25"
+
+#   vpc_id             = module.vpc.vpc_id
+#   private_subnet_ids = module.vpc.private_subnets
+
+#   managed_node_groups = {
+#     eksblueprint_nodegroup_med_1 = {
+#       node_group_name = "eksblueprint_nodegroup_med_1"
+#       instance_types  = ["t2.medium"]
+#       min_size        = 3
+#       desired_size    = 3
+#       max_size        = 3
+#       subnet_ids      = module.vpc.private_subnets
+#     }
+#     eksblueprint_nodegroup_small_1 = {
+#       node_group_name = "eksblueprint_nodegroup_small_1"
+#       instance_types  = ["t2.small"]
+#       min_size        = 2
+#       desired_size    = 2
+#       max_size        = 2
+#       subnet_ids      = module.vpc.private_subnets
+#     }
+#   }
+#   tags = local.tags
+# }
+
+module "eks" {
+  source  = "terraform-aws-modules/eks/aws"
+  version = "~> 20.0"
 
   cluster_name    = local.cluster_name
-  cluster_version = "1.25"
+  cluster_version = "1.29"
 
-  vpc_id             = module.vpc.vpc_id
-  private_subnet_ids = module.vpc.private_subnets
+  cluster_endpoint_public_access  = false
+  cluster_endpoint_private_access = true
+  enable_irsa               = true
 
-  managed_node_groups = {
-    eksblueprint_nodegroup_med_1 = {
-      node_group_name = "eksblueprint_nodegroup_med_1"
-      instance_types  = ["t2.medium"]
-      min_size        = 3
-      desired_size    = 3
-      max_size        = 3
-      subnet_ids      = module.vpc.private_subnets
+  vpc_id                   =  module.vpc.vpc_id
+  subnet_ids               =  module.vpc.private_subnets
+  control_plane_subnet_ids =  module.vpc.public_subnets
+
+
+
+  eks_managed_node_groups = {
+    med_1 = {
+      instance_types = ["t2.medium"]
+
+      min_size     = 3
+      max_size     = 3
+      desired_size = 3
     }
-    eksblueprint_nodegroup_small_1 = {
-      node_group_name = "eksblueprint_nodegroup_small_1"
-      instance_types  = ["t2.small"]
-      min_size        = 2
-      desired_size    = 2
-      max_size        = 2
-      subnet_ids      = module.vpc.private_subnets
-    }
-  }
-  tags = local.tags
-}
-
-
-
-module "eks_blueprints_kubernetes_addons" {
-
-  source               = "github.com/aws-ia/terraform-aws-eks-blueprints//modules/kubernetes-addons?ref=v4.32.0"
-  eks_cluster_id       = module.eks_blueprints.eks_cluster_id
-  eks_cluster_endpoint = module.eks_blueprints.eks_cluster_endpoint
-  eks_oidc_provider    = module.eks_blueprints.oidc_provider
-  eks_cluster_version  = module.eks_blueprints.eks_cluster_version
-
-  enable_portworx = true
-
-  portworx_helm_config = {
-    set_sensitive = [
-      {
-        name  = "aws.accessKeyId"
-        value = var.aws_access_key_id
-      },
-      {
-        name  = "aws.secretAccessKey"
-        value = var.aws_secret_access_key
-      }
-    ]
   }
 
   tags = local.tags
 }
+
+# module "eks_blueprints_kubernetes_addons" {
+
+#   source               = "github.com/aws-ia/terraform-aws-eks-blueprints//modules/kubernetes-addons?ref=v4.32.0"
+#   eks_cluster_id       = module.eks_blueprints.eks_cluster_id
+#   eks_cluster_endpoint = module.eks_blueprints.eks_cluster_endpoint
+#   eks_oidc_provider    = module.eks_blueprints.oidc_provider
+#   eks_cluster_version  = module.eks_blueprints.eks_cluster_version
+
+#   enable_portworx = true
+
+#   portworx_helm_config = {
+#     set_sensitive = [
+#       {
+#         name  = "aws.accessKeyId"
+#         value = var.aws_access_key_id
+#       },
+#       {
+#         name  = "aws.secretAccessKey"
+#         value = var.aws_secret_access_key
+#       }
+#     ]
+#   }
+
+#   tags = local.tags
+# }
